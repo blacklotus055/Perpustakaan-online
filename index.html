@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Tangerine', 'cursive'],
+                    },
+                    colors: {
+                        gold: {
+                            DEFAULT: '#D4AF37',
+                            light: '#E6C35C',
+                            dark: '#8c6d1f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen font-sans text-[#f5f2e7]">
+
+    <div id="app">
+        <!-- Rendered by script.js -->
+    </div>
+
+    <!-- Components for Dynamic Rendering -->
+    <template id="login-template">
+        <div class="flex items-center justify-center min-h-screen p-4 animate-fade-in">
+            <div class="glass-box w-full max-w-[400px]">
+                <h2 class="text-3xl font-bold text-[#E6C35C] mb-2 flex items-center justify-center gap-2">
+                    <i data-lucide="scale" class="w-8 h-8"></i> 
+                    Login
+                </h2>
+                <p class="text-[#f5f2e7]/80 mb-6 font-medium">Masukkan NPM (13 digit)</p>
+                
+                <input
+                    id="npm-input"
+                    type="text"
+                    placeholder="2300000000000"
+                    class="w-full p-4 mb-4 rounded-xl bg-white/10 border-2 border-[#D4AF37]/30 text-white placeholder:text-white/30 focus:border-[#D4AF37] outline-none transition-all"
+                />
+                
+                <button id="login-button" class="btn-gold w-full text-lg mb-4">
+                    MASUK
+                </button>
+                
+                <p id="login-error" class="text-red-400 font-medium hidden animate-pulse"></p>
+            </div>
+        </div>
+    </template>
+
+    <template id="app-layout">
+        <div class="flex h-screen overflow-hidden">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="bg-black/95 backdrop-blur-2xl border-r border-[#D4AF37]/30 overflow-hidden flex-shrink-0 lg:relative fixed inset-y-0 left-0 z-[100] h-full transform transition-transform duration-300 -translate-x-full lg:translate-x-0">
+                <div class="w-[300px] lg:w-[280px] p-6 h-full flex flex-col">
+                    <div class="flex justify-between items-center mb-12">
+                        <div class="font-display text-2xl text-[#E6C35C] flex items-center gap-2 leading-tight">
+                            <i data-lucide="scale" class="w-8 h-8 flex-shrink-0"></i> Perpustakaan Digital
+                        </div>
+                        <button id="close-sidebar" class="lg:hidden p-2 text-white/50 hover:text-white">
+                            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-8 flex-1">
+                        <div>
+                            <h4 class="text-[#D4AF37]/50 text-[10px] font-black uppercase tracking-widest mb-4">Navigasi Kategori</h4>
+                            <div class="space-y-2" id="sidebar-categories">
+                                <!-- Categories will be injected here -->
+                            </div>
+                        </div>
+
+                        <button id="reset-filter" class="w-full text-left p-4 rounded-2xl flex items-center gap-3 text-white/30 hover:text-[#E6C35C] hover:bg-white/5 transition-all">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i> 
+                            <span class="text-sm font-medium">Reset Filter</span>
+                        </button>
+                    </div>
+
+                    <div class="pt-6 border-t border-white/5">
+                        <div class="bg-white/5 rounded-2xl p-5 mb-4 border border-white/5">
+                            <p class="text-[10px] text-[#D4AF37] uppercase font-black tracking-tighter mb-1 opacity-50">Sesi Aktif</p>
+                            <p id="user-npm" class="text-white font-mono text-sm truncate font-bold"></p>
+                        </div>
+                        <button id="logout-button" class="w-full p-4 rounded-2xl flex items-center gap-3 text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-all font-bold text-sm">
+                            <i data-lucide="log-out" class="w-5 h-5"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col min-w-0">
+                <nav class="p-4 flex items-center justify-between border-b border-white/5 bg-black/40 lg:hidden sticky top-0 z-[60] backdrop-blur-md">
+                    <button id="open-sidebar" class="p-3 text-[#E6C35C] bg-white/5 rounded-xl active:scale-95">
+                        <i data-lucide="scale" class="w-6 h-6"></i>
+                    </button>
+                    <div class="font-display text-xl text-[#E6C35C] truncate px-4">Perpustakaan Digital</div>
+                    <div class="w-12 h-12 flex items-center justify-center">
+                        <i data-lucide="book-open" class="w-6 h-6 text-[#E6C35C]/20"></i>
+                    </div>
+                </nav>
+
+                <main class="flex-1 overflow-y-auto">
+                    <div id="content-area" class="max-w-6xl mx-auto p-6 md:p-12">
+                        <!-- Views will be injected here -->
+                    </div>
+                </main>
+            </div>
+        </div>
+    </template>
+
+    <template id="kategori-view">
+        <div class="animate-enter">
+            <header class="mb-16">
+                <h2 class="text-5xl font-bold text-[#E6C35C] mb-4 tracking-tighter">Pilih Jurusan.</h2>
+                <p class="text-white/40 text-lg font-medium">Akses materi hukum digital secara instan dan efisien.</p>
+            </header>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card-legal h-[320px] group border-none" data-category="perdata" style="background-image: url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f'); background-size: cover; background-position: center;">
+                    <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform">
+                        <h3 class="text-3xl font-black text-[#FFD700] mb-3 drop-shadow-2xl">Hukum Perdata</h3>
+                        <div class="w-12 h-1 bg-[#D4AF37] rounded-full group-hover:w-full transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="card-legal h-[320px] group border-none" data-category="pidana" style="background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85'); background-size: cover; background-position: center;">
+                    <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform">
+                        <h3 class="text-3xl font-black text-[#FFD700] mb-3 drop-shadow-2xl">Hukum Pidana</h3>
+                        <div class="w-12 h-1 bg-[#D4AF37] rounded-full group-hover:w-full transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="card-legal h-[320px] group border-none" data-category="tata negara" style="background-image: url('https://media.istockphoto.com/id/1090431444/photo/judge-gavel-and-scale-in-court-legal-concept.webp?a=1&b=1&s=612x612&w=0&k=20&c=-t1Mx0QyMVUWUR8YhATKfE59dVMRWc9-Z3_tDdSRcDw='); background-size: cover; background-position: center;">
+                    <div class="absolute inset-0 bg-black/60 group-hover:bg-black/30 transition-all duration-500"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 translate-y-4 group-hover:translate-y-0 transition-transform">
+                        <h3 class="text-3xl font-black text-[#FFD700] mb-3 drop-shadow-2xl">Hukum Tata Negara</h3>
+                        <div class="w-12 h-1 bg-[#D4AF37] rounded-full group-hover:w-full transition-all duration-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="buku-view">
+        <div class="animate-enter pb-32">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+                <div>
+                    <p class="text-[#D4AF37] uppercase text-xs font-black tracking-[0.2em] mb-3 opacity-60">Koleksi Digital</p>
+                    <h2 id="view-category-title" class="text-5xl font-bold text-[#E6C35C] capitalize tracking-tighter"></h2>
+                </div>
+                
+                <div class="relative w-full md:w-96">
+                    <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#D4AF37]/50"></i>
+                    <input
+                        id="search-input"
+                        type="text"
+                        placeholder="Cari referensi buku..."
+                        class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-14 text-white focus:border-[#D4AF37] outline-none transition-all placeholder:text-white/20 font-medium"
+                    />
+                </div>
+            </div>
+
+            <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Books will be injected here -->
+            </div>
+            
+            <div id="empty-state" class="hidden text-center py-32 bg-white/5 rounded-[40px] border border-dashed border-white/10">
+                <i data-lucide="book-open" class="w-16 h-16 text-white/10 mx-auto mb-6"></i>
+                <p class="text-xl text-white/30 font-bold">Hasil pencarian nihil.</p>
+            </div>
+        </div>
+    </template>
+
+    <div id="book-viewer" class="fixed inset-0 z-[200] bg-black flex flex-col hidden animate-fade-in">
+        <div class="flex justify-between items-center p-4 bg-black/80 border-b border-[#D4AF37]/20 z-[110]">
+            <div class="flex items-center gap-4 min-w-0 pr-6">
+                <button id="close-viewer" class="p-2 hover:bg-white/10 rounded-full text-white/50 hover:text-[#E6C35C] transition-all">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                </button>
+                <h3 id="viewer-title" class="text-[#E6C35C] font-bold text-lg truncate"></h3>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="flex items-center bg-white/5 rounded-full p-1 border border-white/10">
+                    <button id="prev-book" class="p-2.5 hover:bg-[#E6C35C] hover:text-[#142b45] rounded-full transition-all text-white/40">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                    <div class="w-px h-6 bg-white/10 mx-2"></div>
+                    <button id="next-book" class="p-2.5 hover:bg-[#E6C35C] hover:text-[#142b45] rounded-full transition-all text-white/40">
+                        <i data-lucide="arrow-left" class="w-5 h-5 rotate-180"></i>
+                    </button>
+                </div>
+                
+                <button id="close-viewer-btn" class="bg-[#D4AF37] text-[#142b45] px-8 py-2.5 rounded-full font-black hover:bg-[#FFD700] transition-all active:scale-95 shadow-lg text-sm">
+                    TUTUP
+                </button>
+            </div>
+        </div>
+
+        <div class="flex-1 w-full relative overflow-hidden bg-white/5">
+            <iframe id="viewer-iframe" class="absolute inset-0 w-full" style="height: calc(100% + 64px); margin-top: -64px; border: none;" allow="autoplay"></iframe>
+            <div class="absolute top-0 right-0 w-48 h-16 bg-transparent z-10"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
